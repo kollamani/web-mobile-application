@@ -1,4 +1,5 @@
 import { WeatherData } from '@/types';
+
 import { CloudSun } from 'lucide-react';
 
 export const WeatherBadge = ({ weather }: { weather?: WeatherData | null }) => {
