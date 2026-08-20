@@ -4,13 +4,20 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Enable CORS so Next.js frontend on port 3000 can talk to NestJS on port 5000
+  // Read allowed origin from environment variables or fallback to local/wildcard
+  const allowedOrigin = process.env.FRONTEND_URL || 'http://localhost:3000';
+
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: allowedOrigin === '*' ? true : allowedOrigin,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
 
-  await app.listen(5000);
-  console.log('Backend server running on http://localhost:5000');
+  // Use Render's dynamic PORT variable or default to 5000
+  const port = process.env.PORT || 5000;
+
+  // Bind to '0.0.0.0' so Render can detect and route external web traffic
+  await app.listen(port, '0.0.0.0');
+  console.log(`Backend server running on port: ${port}`);
 }
 bootstrap();
